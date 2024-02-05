@@ -13,35 +13,23 @@ export default function SignUpForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
    
-    const result:any = await signUp({
+    const user:any = await signUp({
       email,
       password,
       name})
-      console.log(result)
+      console.log(user)
     
-      if (!result._id) {
+      if (user._id) {
         alert("could not create user")
       } else {
-        //router.refresh()
+        await signIn('sanity-login', {
+          redirect: false,
+          email,
+          password
+        });
+        router.refresh();
       }
-    // if(user){
-    //   await signIn('sanity-login', {
-    //     redirect: false,
-    //     email,
-    //     password
-    //   });
   
-    //   router.refresh();
-
-    // }else{
-      
-    //   alert("there was a problem")
-      
-    // }
-    
-   
-
-   
   };
 
 

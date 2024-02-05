@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import SignUpForm from '@/components/SignUpForm';
 import { SignOutButton } from '@/components/Buttons';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import SignInForm from '@/components/SignInForm';
 
 export default async function Credentials() {

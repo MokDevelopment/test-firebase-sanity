@@ -3,7 +3,7 @@ import { signIn, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export const SignInButton = () => {
-  return <button onClick={() => signIn('github')}>Sign In</button>;
+  return <button onClick={() => signIn('github')}>Sign In (NextAuth screen)</button>;
 };
 
 export const SignOutButton = () => {
