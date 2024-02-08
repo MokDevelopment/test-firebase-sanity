@@ -3,6 +3,7 @@ import SignUpForm from '@/components/SignUpForm';
 import { SignOutButton } from '@/components/Buttons';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import SignInForm from '@/components/SignInForm';
+import RecoverPasswordForm from '@/components/RecoverPasswordForm';
 
 export default async function Credentials() {
   const session = await getServerSession(authOptions);
@@ -22,6 +23,8 @@ export default async function Credentials() {
       <SignInForm />
       <h1 style={{padding: 14, fontWeight:800, paddingTop: 30}}>Sign Up</h1>
       <SignUpForm />
+      <h1 style={{padding: 14, fontWeight:800, paddingTop: 30}}>Forgot Password</h1>
+      <RecoverPasswordForm />
       </>
       }
     </div>

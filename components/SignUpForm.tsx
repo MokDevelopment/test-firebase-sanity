@@ -19,7 +19,7 @@ export default function SignUpForm() {
       name})
       console.log(user)
     
-      if (user._id) {
+      if (!user._id) {
         alert("could not create user")
       } else {
         await signIn('sanity-login', {

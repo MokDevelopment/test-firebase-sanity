@@ -32,7 +32,16 @@ export const schema: { types: SchemaTypeDefinition[] } = {
           name: 'emailVerified',
           type: 'datetime',
           hidden: true,
-        }
+        },
+        {
+          name: 'recoveryToken',
+          type: 'string'
+        },
+        {
+          name: 'recoveryTokenExpires',
+          type: 'number'
+        },
+        
       ]
     },
     {
