@@ -1,9 +1,13 @@
 "use client"
 
-import { recoverPasswordTokenValidate } from "@/actions/credentialActions"
+import {
+  recoverPasswordTokenValidate,
+  recoverPasswordWriteNewPassword,
+} from "@/actions/credentialActions"
 import ReplacePasswordForm, {
   ReplacePasswordFormParams,
 } from "@/components/ReplacePasswordForm"
+import { token } from "@/sanity/env"
 import { MessageType } from "@/types/Message"
 import { useEffect, useState } from "react"
 
@@ -23,21 +27,33 @@ export default function Page({
     onLoad()
   }, [])
 
-  const onReplacePasswordFormSubmit = async (params: ReplacePasswordFormParams) => {
+  const onReplacePasswordFormSubmit = async (pass: string) => {
+    //client validation from params
+    // ...
+
+    //call server for validation & write to db
+    recoverPasswordWriteNewPassword({
+      token: searchParams?.token as string,
+      password: pass,
+    }).then(() => {
+      console.log("New Password was set")
+      setUiState("done")
+    })
+  }
+
+  const onLoad = async () => {
     if (searchParams?.token) {
       const passTokenValidateResponse: MessageType =
         await recoverPasswordTokenValidate(searchParams?.token as string)
       if (passTokenValidateResponse?.ok) {
+        console.log("Token Valid")
         setActionResponse({ email: passTokenValidateResponse.data?.email })
-        alert("token valid")
-      }else{
+        setUiState("form")
+      } else {
+        console.error("Token Invalid")
         setUiState("error")
       }
     }
-  }
-
-  const onLoad = async () => {
-    
   }
 
   if (uiState == "init") {
@@ -52,6 +68,11 @@ export default function Page({
   } else if (uiState == "error") {
     return <h1>The Token does not seem to be valid.</h1>
   } else if (uiState == "done") {
-    return <h1>form</h1>
+    return (
+      <>
+        <h1>New Password was set.</h1>You can login in now ... LINK TO LOGIN
+        FORM HERE
+      </>
+    )
   }
 }

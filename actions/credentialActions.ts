@@ -2,12 +2,13 @@
 
 import { SendMailParams } from "./../service/mailService"
 import { client } from "@/sanity/lib/client"
-import { SanityDocument } from "next-sanity"
+import { Patch, SanityDocument } from "next-sanity"
+import argon2 from "argon2"
 import {
   GET_USER_BY_EMAIL_QUERY,
   GET_USER_BY_PASSWORD_RECOVERY_TOKEN_QUERY,
 } from "@/sanity/lib/queries"
-import { revalidatePath } from "next/cache"
+//import { revalidatePath } from "next/cache"
 import { sendMail } from "@/service/mailService"
 import cryptoRandomString from "crypto-random-string"
 import { Message, MessageType } from "@/types/Message"
@@ -100,6 +101,7 @@ export async function recoverPasswordTokenValidate(token: string) {
           "For further instructions please check the email we have sent to you.",
         data: {
           email: user.email,
+          id: user._id,
         },
       })
     }
@@ -108,4 +110,45 @@ export async function recoverPasswordTokenValidate(token: string) {
     ok: false,
     message: "The token key is expired.",
   })
+}
+
+export async function recoverPasswordWriteNewPassword({
+  token,
+  password,
+}: {
+  token: string
+  password: string
+}) {
+  //check token again server only
+  const passTokenValidateResponse: MessageType =
+    await recoverPasswordTokenValidate(token)
+  if (!passTokenValidateResponse?.ok) {
+    return passTokenValidateResponse
+  }
+
+  //validate password on server again
+  //...
+
+  //write new password to the db
+  const passwordPatch = await client
+    .patch(passTokenValidateResponse.data?.id, {
+      set: {
+        password: await argon2.hash(password),
+      },
+    })
+    .commit()
+    .then(() => {
+      return Message({
+        ok: true,
+        message: "User pass was set",
+      })
+    })
+    .catch((error) => {
+      return Message({
+        ok: false,
+        message: "There was an issue connecting the server",
+      })
+    })
+
+  return passwordPatch
 }
