@@ -7,8 +7,8 @@ import {
 import ReplacePasswordForm, {
   ReplacePasswordFormParams,
 } from "@/components/ReplacePasswordForm"
-import { token } from "@/sanity/env"
 import { MessageType } from "@/types/Message"
+import { signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 type ActionResponse = {
@@ -35,9 +35,14 @@ export default function Page({
     recoverPasswordWriteNewPassword({
       token: searchParams?.token as string,
       password: pass,
-    }).then(() => {
-      console.log("New Password was set")
-      setUiState("done")
+    }).then((resMessage) => {
+      if (resMessage?.ok) {
+        console.log(resMessage.message)
+        setUiState("done")
+      } else {
+        console.error(resMessage.message)
+        setUiState("error")
+      }
     })
   }
 
